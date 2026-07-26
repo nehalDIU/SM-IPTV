@@ -17,6 +17,10 @@ class SupabaseImporter:
 
         options = ClientOptions(headers=headers) if headers else None
         self.client: Client = create_client(supabase_url, supabase_key, options=options)
+        
+        # Explicitly update headers on Postgrest client to guarantee x-admin-token is sent in all table queries
+        if headers:
+            self.client.postgrest.headers.update(headers)
 
     @retry(
         stop=stop_after_attempt(5),

@@ -17,6 +17,7 @@ def main():
     # Read configuration
     supabase_url = os.getenv("SUPABASE_URL")
     supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    admin_secret_token = os.getenv("ADMIN_SECRET_TOKEN")
     
     default_m3u_url = "https://raw.githubusercontent.com/sm-monirulislam/SM-Live-TV/refs/heads/main/Combined_Live_TV.m3u"
     m3u_url = os.getenv("M3U_URL", default_m3u_url)
@@ -49,7 +50,8 @@ def main():
         supabase_url=supabase_url,
         supabase_key=supabase_key,
         m3u_url=m3u_url,
-        hash_file_path=hash_file_path
+        hash_file_path=hash_file_path,
+        admin_secret_token=admin_secret_token
     )
 
     if success:

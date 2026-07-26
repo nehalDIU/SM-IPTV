@@ -1,5 +1,6 @@
 import time
 import requests
+from typing import Optional
 from tenacity import retry, stop_after_attempt, wait_exponential, before_sleep_log
 from app.logger import logger, console
 from app.parser import parse_m3u_playlist
@@ -35,7 +36,8 @@ def run_sync(
     supabase_url: str,
     supabase_key: str,
     m3u_url: str,
-    hash_file_path: str = "last_hash.txt"
+    hash_file_path: str = "last_hash.txt",
+    admin_secret_token: Optional[str] = None
 ) -> bool:
     """
     Orchestrates downloading M3U, parsing, category setup, and syncing to Supabase.
@@ -79,7 +81,11 @@ def run_sync(
 
         # Step 4: Supabase Category Verification & Channel Sync
         try:
-            importer = SupabaseImporter(supabase_url=supabase_url, supabase_key=supabase_key)
+            importer = SupabaseImporter(
+                supabase_url=supabase_url,
+                supabase_key=supabase_key,
+                admin_secret_token=admin_secret_token
+            )
             
             # Step 4a: Verify/Create missing categories
             importer.ensure_categories_exist(channels)
