@@ -10,17 +10,14 @@ class SupabaseImporter:
         if not supabase_url or not supabase_key:
             raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be provided.")
         
-        token = admin_secret_token or os.getenv("ADMIN_SECRET_TOKEN", "GoLiveAdminSecret2026")
-        headers = {}
-        if token:
-            headers["x-admin-token"] = token
+        token = (admin_secret_token or os.getenv("ADMIN_SECRET_TOKEN") or "").strip() or "GoLiveAdminSecret2026"
+        headers = {"x-admin-token": token}
 
-        options = ClientOptions(headers=headers) if headers else None
+        options = ClientOptions(headers=headers)
         self.client: Client = create_client(supabase_url, supabase_key, options=options)
         
         # Explicitly update headers on Postgrest client to guarantee x-admin-token is sent in all table queries
-        if headers:
-            self.client.postgrest.headers.update(headers)
+        self.client.postgrest.headers.update(headers)
 
     @retry(
         stop=stop_after_attempt(5),
